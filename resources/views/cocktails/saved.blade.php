@@ -18,7 +18,7 @@
                 <td>{{ $cocktail->category }}</td>
                 <td>
                     <!-- Botón de Editar con datos del cóctel -->
-                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ $cocktail->id }}"
+                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal"
                         data-name="{{ $cocktail->name }}"
                         data-category="{{ $cocktail->category }}"
                         data-id="{{ $cocktail->id }}">
@@ -43,35 +43,40 @@
 @include('cocktails.modal')
 
 <script>
-    // Script para cargar los datos del cóctel en el modal
+    function formatActionModalForm(form, id) {
+        const actionSplit = form.action.split("/");
+        actionSplit.pop();
+        form.action = actionSplit.join("/") + "/" + id;
+    }
+
     document.addEventListener("DOMContentLoaded", function() {
-    // Script para cargar los datos del cóctel en el modal
-    document.querySelectorAll('.btn-warning').forEach(button => {
-        button.addEventListener('click', function() {
-            const name = this.getAttribute('data-name');
-            const category = this.getAttribute('data-category');
-            const id = this.getAttribute('data-id');
+        // Script para cargar los datos del cóctel en el modal
+        document.querySelectorAll('.btn-warning').forEach(button => {
+            button.addEventListener('click', function() {
+                const name = this.getAttribute('data-name');
+                const category = this.getAttribute('data-category');
+                const id = this.getAttribute('data-id');
 
-            // Asignar los valores al modal
-            const nameField = document.getElementById('cocktailName' + id);
-            const categoryField = document.getElementById('cocktailCategory' + id);
-            const idField = document.getElementById('cocktailId' + id);
+                // Disparar mensaje en la consola para depurar
+                console.log('Botón Editar clickeado para el cóctel con ID:', id);
+                console.log('Nombre:', name);
+                console.log('Categoría:', category);
 
-            if (nameField && categoryField && idField) {
-                nameField.value = name;
-                categoryField.value = category;
-                idField.value = id;
-            }
+                // Asignar los valores al modal
+                const nameField = document.getElementById('cocktailName');
+                const categoryField = document.getElementById('cocktailCategory');
+                const idField = document.getElementById('cocktailId');
+                const form = document.getElementById('editForm');
 
-            // Actualizar la acción del formulario
-            const form = document.getElementById('editForm' + id);
-            if (form) {
-                form.action = '/cocktails/' + id;
-            }
+                if (id != null && id.length > 0) {
+                    nameField.value = name;
+                    categoryField.value = category;
+                    idField.value = id;
+                    formatActionModalForm(form, id);
+                }
+            });
         });
     });
-});
-
 
     document.querySelectorAll('.btn-delete').forEach(button => {
         button.addEventListener('click', function(e) {
